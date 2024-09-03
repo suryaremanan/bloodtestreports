@@ -1,0 +1,12 @@
+urllib3  
+botocore
+boto3
+fastapi
+uvicorn
+streamlit
+pytesseract
+pdf2image
+opencv-python-headless
+pandas
+plotly
+requests

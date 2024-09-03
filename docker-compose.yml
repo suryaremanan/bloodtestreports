@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  fastapi:
+    build: ./fastapi
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./fastapi:/app
+    environment:
+      - OLLAMA_API_URL=http://ollama:11434/api/generate
+      - OLLAMA_API_KEY=your_ollama_api_key
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - custom_network
+
+  ollama:
+    container_name: ollama
+    image: ollama/ollama
+    volumes:
+      - ollama:/root/.ollama
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:11434 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - custom_network
+
+  streamlit:
+    build: ./streamlit
+    command: ["streamlit", "run", "/app/streamlit_app.py", "--server.port", "8501", "--server.address", "0.0.0.0"]
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./streamlit:/app
+    depends_on:
+      - fastapi
+    networks:
+      - custom_network
+
+volumes:
+  ollama:
+
+networks:
+  custom_network:
+    driver: bridge
+

@@ -1,0 +1,10 @@
+streamlit
+
+# Additional dependencies
+pydantic
+requests
+pytesseract
+pdf2image
+opencv-python-headless
+pandas
+plotly
